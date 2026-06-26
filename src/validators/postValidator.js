@@ -7,11 +7,15 @@ const createPostSchema = z.object({
 });
 
 export const validateCreatePost = (req, res, next) => {
-    const { error } = createPostSchema.safeParse(req.body);
-    if (error) {
-        console.log('=======================================', error.message);
-        return;
-        // return res.status(400).json({ message: error.errors.map(err => err.message).join(', ') });
+    const result = createPostSchema.safeParse(req.body);
+    if (!result.success) {
+        const errors = result.error.issues.map((issue) => ({
+            field: issue.path.length ? issue.path.join('.') : 'body',
+            message: issue.message,
+        }));
+        return res.status(400).json({
+            errors,
+        });
     }
     next();
-}
+};

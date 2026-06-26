@@ -2,15 +2,19 @@ import express from 'express';
 import { createPost, getAllPosts, getPostById, updatePost, deletePost } from '../controllers/postController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import { validateCreatePost } from '../validators/postValidator.js';
+import { validateRequest } from '../middleware/validateRequest.js';
+import { createPostSchema } from '../validators/post/createPost.js';
 
 const router = express.Router();
 
 router.use(authMiddleware);
 router.get('/getAllPosts', getAllPosts);
-router.post('/createPost', validateCreatePost, createPost);
+// router.post('/createPost', validateCreatePost, createPost);
+router.post('/createPost', validateRequest(createPostSchema), createPost);
 router.get('/getPostById/:id', getPostById);
 router.put('/updatePost/:id', updatePost);
 router.delete('/deletePost/:id', deletePost);
+// apply individual route-level middleware for authentication and validation
 // router.post('/createPost', authMiddleware, createPost);
 
 // router.get('/getAllUsers', (req, res) => {
